@@ -2,28 +2,85 @@ const express = require('express');
 
 const app = express();
 
-app.get('/', (req, res) => {
-    res.status(200).send({ message: "Hello Cedric"});
-});
+app.use(express.json());
 
-app.get('/welcome', (req, res) => {
-    res.send({ message: "Welcome Mr Cedric" });
-});
+const students = [{
+    id: 1,
+    name: 'Lilian Kibathi',
+    age: 24,
+    gender: 'female'
+}, {
+    id: 2,
+    name: 'Bella Wanjiku',
+    age: 25,
+    gender: 'male'
+}];
 
-// Dynamic route with parameters
-app.get('/welcome/:name', (req, res) => {
-    const name = req.params.name;
-    const gender = req.query.gender;
+// GET /students
+app.get('/students',(req, res) => {
+    res.send(students)
+})
 
-    let greeting = '';
-
-    if (gender == 'm') {
-        greeting = 'Mr';
-    } else {
-        greeting = 'Mrs';
+// GET /students/:id
+app.get('/students/:id', (req, res) => {
+    const id = req.params.id;
+    
+    for (let i=0; i<students.length; i++) {
+        if (students[i].id == id) {
+            return res.send(students[i]);
+        }
     }
 
-    res.send({ message: `Welcome ${greeting} ${name}` });
+    res.status(404).send({message: 'Student not found'});
+});
+
+app.post('/create', (req, res)=>{
+    try { // important when using db connection
+        const data = req.body;
+        res.status(201).send(data);
+    } catch (error) {
+        res.status(500).send({message: error.message})
+    }
+})
+
+// POST /students
+app.post('/students', (req, res) => {
+    const student = req.body;
+    students.push(student);
+    res.status(201).send(student);
+
+    // improvements:
+    // - auto id using the students length
+});
+
+// PUT /students/:id
+app.put('/students/:id', (req, res) => {
+    const id = req.params.id;
+    const student = req.body;
+
+    for (let i=0; i<students.length; i++) {
+        if (students[i].id == id) {
+            students[i] = student;
+            return res.send(student);
+        }
+    }
+
+    res.status(404).send({message: 'Student not found'});
+});
+
+// DELETE /students/:id
+
+app.delete('/students/:id', (req, res) => {
+    const id = req.params.id;
+
+    for (let i=0; i<students.length; i++) {
+        if (students[i].id == id) {
+            students.splice(i, 1);
+            return res.send({message: 'Student deleted successfully'});
+        }
+    }
+
+    res.status(404).send({message: 'Student not found'});
 });
 
 app.listen(3000, () => {
