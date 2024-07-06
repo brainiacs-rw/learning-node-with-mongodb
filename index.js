@@ -13,7 +13,17 @@ app.get('/welcome', (req, res) => {
 // Dynamic route with parameters
 app.get('/welcome/:name', (req, res) => {
     const name = req.params.name;
-    res.send({ message: `Welcome Mr ${name}` });
+    const gender = req.query.gender;
+
+    let greeting = '';
+
+    if (gender == 'm') {
+        greeting = 'Mr';
+    } else {
+        greeting = 'Mrs';
+    }
+
+    res.send({ message: `Welcome ${greeting} ${name}` });
 });
 
 app.listen(3000, () => {
