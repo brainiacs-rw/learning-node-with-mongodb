@@ -70,27 +70,8 @@ app.get('/students/name/:name', async (req, res) => {
 // PUT /students/:id
 app.put('/students/:id', async (req, res) => {
     try {
-        /*
-        const id = req.params.id;
-        const { name, age, gender } = req.body;
-// Firts way: finding the user and updating manually
-        // get the user we want to update
-        const student = await Student.findById(id);
-        // const student = await Student.findOne({
-        //     id
-        // });
 
-        if (student == null)
-            return res.status(404).send({ message: 'Student not found' });
-
-        student.name = name;
-        student.age = age;
-        student.gender = gender;
-
-        await student.save();
-        */
         // only update what we need
-
         const id = req.params.id;
         const student = await Student.findByIdAndUpdate(
             id, req.body);
@@ -104,20 +85,21 @@ app.put('/students/:id', async (req, res) => {
     }
 });
 
-// // DELETE /students/:id
+// DELETE /students/:id
+app.delete('/students/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const student = await Student.findByIdAndDelete(id);
 
-// app.delete('/students/:id', (req, res) => {
-//     const id = req.params.id;
+        if (student == null)
+            return res.status(404).send({ message: 'Student not found' });
 
-//     for (let i=0; i<students.length; i++) {
-//         if (students[i].id == id) {
-//             students.splice(i, 1);
-//             return res.send({message: 'Student deleted successfully'});
-//         }
-//     }
+        res.status(200).send({ message: "Student was deleted successfully" });
 
-//     res.status(404).send({message: 'Student not found'});
-// });
+    } catch (error) {
+        res.status(500).send({ message: error.message })
+    }
+});
 
 app.listen(3000, () => {
     console.log('Server is running on http://localhost:3000');
