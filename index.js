@@ -9,7 +9,7 @@ app.use(express.json());
 const { Student } = require("./db/student.model.js");
 
 // GET /students
-app.get('/students',async (req, res) => {
+app.get('/students', async (req, res) => {
     try {
         const students = await Student.find();
         res.status(200).send({ data: students })
@@ -18,52 +18,91 @@ app.get('/students',async (req, res) => {
     }
 });
 
-// app.post('/create', (req, res)=>{
-//     try { // important when using db connection
-//         const data = req.body;
-//         res.status(201).send(data);
-//     } catch (error) {
-//         res.status(500).send({message: error.message})
-//     }
-// })
+app.post('/students', async (req, res) => {
+    try {
+        const { name, age, gender } = req.body;
+        // validations
+        const student = new Student({
+            name,
+            age,
+            gender
+        })
 
-// // GET /students/:id
-// app.get('/students/:id', (req, res) => {
-//     const id = req.params.id;
-    
-//     for (let i=0; i<students.length; i++) {
-//         if (students[i].id == id) {
-//             return res.send(students[i]);
-//         }
-//     }
+        await student.save(); // save the data
 
-//     res.status(404).send({message: 'Student not found'});
-// });
+        res.status(201).send({ data: student });
+    } catch (error) {
+        res.status(500).send({ message: error.message })
+    }
+})
 
-// // POST /students
-// app.post('/students', (req, res) => {
-//     const student = req.body;
-//     students.push(student);
-//     res.status(201).send(student);
+// GET /students/:id
+app.get('/students/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
 
-//     // improvements:
-//     // - auto id using the students length
-// });
+        const student = await Student.findById(id);
 
-// // PUT /students/:id
-// app.put('/students/:id', (req, res) => {
-//     const id = req.params.id;
-//     const student = req.body;
+        if (student == null)
+            return res.status(404).send({ message: 'Student not found' });
 
-//     for (let i=0; i<students.length; i++) {
-//         if (students[i].id == id) {
-//             students[i] = student;
-//             return res.send(student);
-//         }
-//     }
+        res.status(201).send({ data: student });
+    } catch (error) {
+        res.status(500).send({ message: error.message })
+    }
+});
 
-//     res.status(404).send({message: 'Student not found'});
-// });
+// GET /students/name/:name
+app.get('/students/name/:name', async (req, res) => {
+    try {
+        const name = req.params.name;
+
+        const students = await Student.find({
+            name,
+        });
+
+        res.status(201).send({ data: students });
+    } catch (error) {
+        res.status(500).send({ message: error.message })
+    }
+});
+
+// PUT /students/:id
+app.put('/students/:id', async (req, res) => {
+    try {
+        /*
+        const id = req.params.id;
+        const { name, age, gender } = req.body;
+// Firts way: finding the user and updating manually
+        // get the user we want to update
+        const student = await Student.findById(id);
+        // const student = await Student.findOne({
+        //     id
+        // });
+
+        if (student == null)
+            return res.status(404).send({ message: 'Student not found' });
+
+        student.name = name;
+        student.age = age;
+        student.gender = gender;
+
+        await student.save();
+        */
+        // only update what we need
+
+        const id = req.params.id;
+        const student = await Student.findByIdAndUpdate(
+            id, req.body);
+
+        if (student == null)
+            return res.status(404).send({ message: 'Student not found' });
+
+        res.status(200).send({ data: student });
+    } catch (error) {
+        res.status(500).send({ message: error.message })
+    }
+});
 
 // // DELETE /students/:id
 
