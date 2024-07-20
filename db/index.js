@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://127.0.0.1:27017/learning-node-with-mongodb')
+const DB_URL = process.env.MONGODB_CONNECTION
+
+mongoose.connect(DB_URL)
     .then(() => console.log('Connected!'));

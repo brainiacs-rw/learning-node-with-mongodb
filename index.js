@@ -1,10 +1,14 @@
 const express = require('express');
 
+require('dotenv').config()
+
 require("./db/index.js")
 
 const app = express();
 
 app.use(express.json());
+
+const PORT = process.env.PORT;
 
 const { Student } = require("./db/student.model.js");
 
@@ -101,6 +105,6 @@ app.delete('/students/:id', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
