@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllStudents, createStudent, getStudentById, getStudentByName, updateStudent, deleteStudent } = require('../controllers/student.controller');
+const { getAllStudents, createStudent, getStudentById, getStudentByName, updateStudent, deleteStudent, studentLogin } = require('../controllers/student.controller');
 
 const router = express.Router();
 
@@ -9,7 +9,7 @@ router.get("/:id", getStudentById);
 router.get("/name/:name", getStudentByName);
 router.put("/:id", updateStudent);
 router.delete("/:id", deleteStudent);
-
+router.post("/login",studentLogin);
 // router.route("/")
 //     .get(getAllStudents)
 //     .post(createStudent);
