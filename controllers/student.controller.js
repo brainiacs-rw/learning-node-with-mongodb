@@ -23,7 +23,8 @@ exports.createStudent = async (req, res) => {
             age,
             gender,
             email,
-            password
+            password,
+            role
         } = req.body;
         const hashedPassword = await brcypt.hash(password, 10);
         // validations
@@ -32,7 +33,8 @@ exports.createStudent = async (req, res) => {
             age,
             gender,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            role
         })
 
         await student.save(); // save the data
